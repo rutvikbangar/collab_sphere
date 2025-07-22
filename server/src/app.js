@@ -1,5 +1,6 @@
 import express from "express"
 import cors from "cors"
+import { errorHandler } from "./middlewares/errorhandler.js";
 const app = express();
 
 app.use(cors({
@@ -17,7 +18,9 @@ import userRoutes from "./routes/userRoutes.js"
 app.use("/api/v1/user",userRoutes);
 app.use("/api/v1/auth",authRoutes);
 
-// 
+
+
+app.use(errorHandler);
 
 
 export {app}
