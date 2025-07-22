@@ -12,7 +12,12 @@ app.use(express.urlencoded({extended:true,limit:"16kb"}));
 app.use(express.static("public"));
 
 import authRoutes from "./routes/authRoutes.js"
+import userRoutes from "./routes/userRoutes.js"
+
+app.use("/api/v1/user",userRoutes);
 app.use("/api/v1/auth",authRoutes);
+
+// 
 
 
 export {app}
