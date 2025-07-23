@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { UserIcon, MailIcon, HashIcon } from "../../assets/CustomIcon.jsx";
-import { sendOtp, verifyOtp } from "../../api-service/api.js";
+import { createUser, sendOtp, verifyOtp } from "../../api-service/api.js";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const RegisterForm = () => {
     // State for form fields
+    const navigate = useNavigate();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [otp, setOtp] = useState('');
@@ -42,12 +44,20 @@ const RegisterForm = () => {
         if(!data){
             setOtp('');
             setOtpSent(false);
+        }else{
+            // create user and naviate to login
+            const response = await createUser(name,email);
+            if(response){
+                toast.success("User created");
+                navigate("/login");
+            }
         }
         setIsLoading(false);
 
     };
 
     return (
+        <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6 items-center justify-center">
             {/* Header */}
             <div className="text-center">
@@ -132,12 +142,18 @@ const RegisterForm = () => {
             </form>
 
             {/* Footer */}
-            <p className="text-center text-sm text-gray-500">
-                Already have an account?{' '}
-                <a href="#" className="font-medium text-blue-600 hover:underline">
-                    Sign In
-                </a>
-            </p>
+            <div className="text-center mt-4">
+                    <p className="text-sm text-gray-600">
+                        Already have an account?{" "}
+                        <span
+                            onClick={() => navigate("/login")}
+                            className="text-blue-600 font-medium hover:underline cursor-pointer"
+                        >
+                            Sign In
+                        </span>
+                    </p>
+                </div>
+        </div>
         </div>
     );
 };

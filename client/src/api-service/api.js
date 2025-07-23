@@ -39,3 +39,21 @@ export const verifyOtp = async (email, otp, registerFlag) => {
   }
 };
 
+export const createUser = async (name, email) => {
+  try {
+    toast.loading("Creating user...");
+    const response = await api.post("/user/register", { name, email });
+    return response.data.data;
+  } catch (error) {
+    if (error.response) {
+      toast.error(error.response.data.message);
+    } else {
+      toast.error("Something went wrong");
+    }
+    return null;
+  } finally {
+    toast.dismiss();
+  }
+};
+
+
