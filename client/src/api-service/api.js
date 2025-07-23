@@ -56,4 +56,30 @@ export const createUser = async (name, email) => {
   }
 };
 
+export const getAllUserRooms = async () => {
+  try {
+    const response = await api.get("/room");
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      toast.error(error.response.data.message);
+    } else {
+      toast.error("unable to fetch the rooms");
+    }
+    return null;
+  }
+}
+export const createRoom = async (roomName) => {
+  try {
+    const response = await api.post("/room/create-room",{roomName});
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      toast.error(error.response.data.message);
+    } else {
+      toast.error("unable to create a room");
+    }
+    return null;
+  }
+}
 

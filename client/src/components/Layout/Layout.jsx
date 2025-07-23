@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
-
+import { useLocation } from 'react-router-dom';
 const Layout = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isWhiteboardPage = location.pathname.startsWith('/room/');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const handleLogout = () => {
@@ -82,10 +84,16 @@ const Layout = () => {
         </div>
       </div>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+      {isWhiteboardPage ? (
+        <main className='px-4'>
+
+          <Outlet />
+        </main>
+      ) 
+      :(<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Outlet />
-      </main>
+      </main>)}
     </div>
   );
 };

@@ -14,9 +14,11 @@ app.use(express.static("public"));
 
 import authRoutes from "./routes/authRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
+import roomRoutes from "./routes/roomRoutes.js"
 
 app.use("/api/v1/user",userRoutes);
 app.use("/api/v1/auth",authRoutes);
+app.use("/api/v1/room",roomRoutes);
 
 
 

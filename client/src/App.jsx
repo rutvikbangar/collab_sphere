@@ -5,7 +5,8 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider }
 import LoginForm from "./components/auth/LoginForm.jsx";
 import ProtectedRoute from "./components/wrapper/auth.wrapper.jsx";
 import Layout from "./components/Layout/Layout.jsx";
-import HomePage from "./components/pages/HomePage.jsx";
+import DashboardPage from "./components/pages/DashboardPage.jsx";
+import RoomDetailPage from "./components/pages/RoomDetailPage.jsx";
 
 
 
@@ -19,8 +20,17 @@ const router = createBrowserRouter(createRoutesFromElements(
       <ProtectedRoute>
         <Layout />
       </ProtectedRoute>}>
-      <Route index element={<HomePage />} />
+      <Route index element={<DashboardPage />} />
     </Route>
+
+    <Route
+      path="/room/:roomId"
+      element={
+        <ProtectedRoute>
+          <RoomDetailPage />
+        </ProtectedRoute>
+      }
+    />
 
 
   </>))
@@ -30,7 +40,7 @@ export default function App() {
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
-      <RouterProvider router={router}/>
+      <RouterProvider router={router} />
     </>
 
 

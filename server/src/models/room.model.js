@@ -9,8 +9,7 @@ const roomSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:'User',
         required:true
-    },
-    
+    },    
     members: [
     {
       type: mongoose.Schema.Types.ObjectId,
