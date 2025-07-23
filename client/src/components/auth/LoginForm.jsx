@@ -35,7 +35,6 @@ const LoginForm = () => {
         try {
             const success = await verifyOtp(email, otp, false);
             if (success) {
-                console.log(success.user);
                 localStorage.setItem('user', JSON.stringify(success.user));
                 localStorage.setItem('accessToken', success.accessToken);
                 navigate("/");

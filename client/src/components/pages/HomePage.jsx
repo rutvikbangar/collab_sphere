@@ -1,6 +1,9 @@
+import Whiteboard from "../whiteboard/whiteboard.jsx"
+
 function HomePage(params) {
     return(<>
     <p>This is HomePage</p>
+    
     </>)
 }
 
