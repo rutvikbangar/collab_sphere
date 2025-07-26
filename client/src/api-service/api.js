@@ -71,7 +71,7 @@ export const getAllUserRooms = async () => {
 }
 export const createRoom = async (roomName) => {
   try {
-    const response = await api.post("/room/create-room",{roomName});
+    const response = await api.post("/room/create-room", { roomName });
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -83,3 +83,47 @@ export const createRoom = async (roomName) => {
   }
 }
 
+export const saveStrokes = async (roomId, strokesId, points, color, tool, width) => {
+  try {
+    const response = await api.post("/strokes/save", { roomId, strokesId, points, color, tool, width });
+  } catch (error) {
+    if (error.response) {
+      toast.error(error.response.data.message);
+    } else {
+      toast.error("unable to save strokes");
+    }
+    return null;
+  }
+}
+
+export const deleteStrokes = async (roomId) => {
+  try {
+    const response = await api.delete(`/strokes/delete/${roomId}`);
+    if (response.status === 200) {
+      toast.success("saved!");
+    }
+  } catch (error) {
+    if (error.response) {
+      toast.error(error.response.data.message);
+    } else {
+    }
+    return null;
+  }
+}
+
+export const fetchStrokes = async (roomId) => {
+  try {
+    const response = await api.get(`/strokes/${roomId}`);
+    console.log(response.data.data);
+    return response.data.data || [];
+  } catch (error) {
+
+    console.log(error);
+    if (error.response) {
+      toast.error(error.response.data.message);
+    } else {
+      toast.error("unable to fetch strokes");
+    }
+    return [];
+  }
+};

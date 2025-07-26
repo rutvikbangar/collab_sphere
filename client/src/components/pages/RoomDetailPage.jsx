@@ -27,7 +27,7 @@ function RoomDetailPage() {
 
       <div className="flex flex-1 overflow-hidden">
         <div className="w-[75%] h-full overflow-hidden">
-          <Whiteboard />
+          <Whiteboard roomId={roomId} />
         </div>
 
         
