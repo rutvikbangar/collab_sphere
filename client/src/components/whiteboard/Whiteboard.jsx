@@ -1,9 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Stage, Layer, Line } from 'react-konva';
 import { FaPen, FaEraser } from 'react-icons/fa';
-import { fetchStrokes, deleteStrokes, saveStrokes } from "../../api-service/api.js"
 import clsx from 'clsx';
 import { v4 as uuidv4 } from 'uuid';
+import io from "socket.io-client"
+
+
+const socket = io('http://localhost:3000');
+
 const Whiteboard = ({ roomId }) => {
   const [lines, setLines] = useState([]);
   const [tool, setTool] = useState('pen');
@@ -13,38 +17,31 @@ const Whiteboard = ({ roomId }) => {
 
   const containerRef = useRef(null);
   const isDrawing = useRef(false);
+  const socketRef = useRef(null);
+
 
   const colors = ['#ffffff', '#ef4444', '#34d399', '#60a5fa', '#f59e0b'];
 
 
 
-  useEffect(() => {
-    const loadStrokes = async () => {
-      if (!roomId) return;
-      setIsLoading(true);
-      try {
-        const fetchedStrokes = await fetchStrokes(roomId);
-        if (Array.isArray(fetchedStrokes)) {
-          const mappedLines = fetchedStrokes.map(stroke => ({
-            tool: stroke.tool,
-            points: stroke.points,
-            color: stroke.color,
-          }));
-          setLines(mappedLines);
-        } else {
-          setLines([]);
-        }
-      } catch (error) {
-        console.error("Failed to load strokes:", error);
-        setLines([]);
-      } finally {
-        setIsLoading(false);
-      }
+   useEffect(() => {
+    if (!roomId) return;
+    socket.emit('join-room', roomId);
+
+    socket.on('initial-strokes', (strokes) => {
+      setLines(strokes);
+    });
+
+    socket.on('receive-line', (line) => {
+      setLines((prevLines) => [...prevLines, line]);
+    });
+
+    setIsLoading(false);
+    return () => {
+      socket.off('initial-strokes');
+      socket.off('receive-line'); 
     };
-
-    loadStrokes();
   }, [roomId]);
-
 
   useEffect(() => {
     const updateSize = () => {
@@ -65,47 +62,39 @@ const Whiteboard = ({ roomId }) => {
 
 
 
-  const handleSave = async () => {
-    if (!roomId) return;
 
-    await deleteStrokes(roomId); // Delete old strokes
 
-    for (let stroke of lines) {
-      const strokeId = uuidv4();
-      await saveStrokes(
-        roomId,
-        strokeId,
-        stroke.points,
-        stroke.color,
-        stroke.tool,
-        stroke.tool === 'pen' ? 3 : 20
-      );
-    }
-
-  };
   const handleMouseDown = (e) => {
     isDrawing.current = true;
     const pos = e.target.getStage().getPointerPosition();
-    setLines([...lines, { tool, points: [pos.x, pos.y], color: strokeColor }]);
+    const newLine = {
+      tool,
+      points: [pos.x, pos.y],
+      color: strokeColor,
+      strokeId: uuidv4(),
+      strokeWidth: tool === 'pen' ? 3 : 20
+    };
+    setLines([...lines, newLine]);
   };
+
 
   const handleMouseMove = (e) => {
     if (!isDrawing.current) return;
 
     const stage = e.target.getStage();
     const point = stage.getPointerPosition();
-    const allButLast = lines.slice(0, -1);
-
-    const updatedLastLine = {
-      ...lines[lines.length - 1],
-      points: lines[lines.length - 1].points.concat([point.x, point.y]),
-    };
-
-    setLines([...allButLast, updatedLastLine]);
+    let lastLine = lines[lines.length - 1];
+    lastLine.points = lastLine.points.concat([point.x, point.y]);
+    const newLines = [...lines.slice(0, -1), lastLine];
+    setLines(newLines);
   };
+
 
   const handleMouseUp = () => {
     isDrawing.current = false;
+    if (lines.length > 0) {
+      socket.emit('draw-line', { roomId, line: lines[lines.length - 1] });
+    }
   };
 
   const toolbarHeight = 70;
@@ -137,12 +126,6 @@ const Whiteboard = ({ roomId }) => {
             <FaEraser /> Eraser
           </button>
         </div>
-        <button
-          onClick={handleSave}
-          className="ml-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-        >
-          Save
-        </button>
 
         {/* Color Picker */}
         <div className="flex gap-2">

@@ -22,4 +22,21 @@ instance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+instance.interceptors.response.use(
+  // If the response is successful
+  (response) => response,
+  // If the response has an error
+  (error) => {
+    // Check if the error is a 401 Unauthorized
+    if (error.response && error.response.status === 401) {
+      // Remove the invalid token from local storage
+      localStorage.removeItem("accessToken");
+      // Redirect the user to the login page
+      window.location.href = '/login';
+    }
+    // For all other errors, just pass them on
+    return Promise.reject(error);
+  }
+);
+
 export default instance;

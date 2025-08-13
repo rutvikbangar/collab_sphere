@@ -1,16 +1,27 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+
 const Layout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isWhiteboardPage = location.pathname.startsWith('/room/');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
+  // Get user data from localStorage
+  const userInitial = useMemo(() => {
+    const userData = localStorage.getItem('user');
+    if (!userData) return '?';
+    
+    const user = JSON.parse(userData);
+    return user.name ? user.name.charAt(0).toUpperCase() : '?';
+  }, []);
+
   const handleLogout = () => {
     // Clear auth token/user data from storage
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('user');
     navigate('/login');
   };
 
@@ -25,23 +36,7 @@ const Layout = () => {
               <h1 className="text-xl font-bold text-indigo-600">CollabSphere</h1>
             </div>
 
-            {/* Navigation Items */}
-            <div className="hidden md:block">
-              <div className="ml-10 flex items-center space-x-4">
-                <button 
-                  onClick={() => navigate('/dashboard')}
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Dashboard
-                </button>
-                <button 
-                  onClick={() => navigate('/projects')}
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Projects
-                </button>
-              </div>
-            </div>
+
 
             {/* User Menu */}
             <div className="relative">
@@ -49,11 +44,9 @@ const Layout = () => {
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
                 className="flex items-center text-sm rounded-full focus:outline-none"
               >
-                <img
-                  className="h-8 w-8 rounded-full"
-                  src="https://via.placeholder.com/32"
-                  alt="User avatar"
-                />
+                <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center">
+                  <span className="text-white font-medium">{userInitial}</span>
+                </div>
               </button>
 
               {/* Dropdown Menu */}
@@ -64,12 +57,6 @@ const Layout = () => {
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                   >
                     Your Profile
-                  </button>
-                  <button
-                    onClick={() => navigate('/settings')}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                  >
-                    Settings
                   </button>
                   <button
                     onClick={handleLogout}

@@ -83,38 +83,10 @@ export const createRoom = async (roomName) => {
   }
 }
 
-export const saveStrokes = async (roomId, strokesId, points, color, tool, width) => {
-  try {
-    const response = await api.post("/strokes/save", { roomId, strokesId, points, color, tool, width });
-  } catch (error) {
-    if (error.response) {
-      toast.error(error.response.data.message);
-    } else {
-      toast.error("unable to save strokes");
-    }
-    return null;
-  }
-}
-
-export const deleteStrokes = async (roomId) => {
-  try {
-    const response = await api.delete(`/strokes/delete/${roomId}`);
-    if (response.status === 200) {
-      toast.success("saved!");
-    }
-  } catch (error) {
-    if (error.response) {
-      toast.error(error.response.data.message);
-    } else {
-    }
-    return null;
-  }
-}
 
 export const fetchStrokes = async (roomId) => {
   try {
     const response = await api.get(`/strokes/${roomId}`);
-    console.log(response.data.data);
     return response.data.data || [];
   } catch (error) {
 
@@ -125,5 +97,21 @@ export const fetchStrokes = async (roomId) => {
       toast.error("unable to fetch strokes");
     }
     return [];
+  }
+};
+
+
+export const addUserToRoom = async (roomId, email) => {
+  try {
+    const response = await api.post(`/room/${roomId}/members`, { email });
+    toast.success("User successfully added to the room!");
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      toast.error(error.response.data.message);
+    } else {
+      toast.error("Failed to add user");
+    }
+    return null;
   }
 };

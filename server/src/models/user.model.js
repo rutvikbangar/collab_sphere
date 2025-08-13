@@ -18,12 +18,6 @@ const userSchema = new Schema(
         avatar:{
             type:String
         },
-        joinedRooms:[
-            {
-                type:Schema.Types.ObjectId,
-                ref:'Room'
-            }
-        ]
     },{timestamps:true}
 );
 
