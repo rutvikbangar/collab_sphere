@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/wrapper/auth.wrapper.jsx";
 import Layout from "./components/Layout/Layout.jsx";
 import DashboardPage from "./components/pages/DashboardPage.jsx";
 import RoomDetailPage from "./components/pages/RoomDetailPage.jsx";
+import ProfilePage from "./components/pages/ProfilePage.jsx"; // Add this import
 
 
 
@@ -21,6 +22,7 @@ const router = createBrowserRouter(createRoutesFromElements(
         <Layout />
       </ProtectedRoute>}>
       <Route index element={<DashboardPage />} />
+      <Route path="profile" element={<ProfilePage />} /> {/* Add this route */}
     </Route>
 
     <Route

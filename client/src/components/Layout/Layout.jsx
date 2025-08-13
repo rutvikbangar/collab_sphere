@@ -18,7 +18,13 @@ const Layout = () => {
     return user.name ? user.name.charAt(0).toUpperCase() : '?';
   }, []);
 
+  const handleProfileClick = () => {
+    setUserMenuOpen(false); // Close menu before navigation
+    navigate('/profile');
+  };
+
   const handleLogout = () => {
+    setUserMenuOpen(false); // Close menu before navigation
     // Clear auth token/user data from storage
     localStorage.removeItem('accessToken');
     localStorage.removeItem('user');
@@ -33,10 +39,13 @@ const Layout = () => {
           <div className="flex justify-between items-center h-16">
             {/* Logo/Brand */}
             <div className="flex-shrink-0">
-              <h1 className="text-xl font-bold text-indigo-600">CollabSphere</h1>
+              <button 
+                onClick={() => navigate('/')}
+                className="text-xl font-bold text-indigo-600 hover:text-indigo-700 transition-colors"
+              >
+                CollabSphere
+              </button>
             </div>
-
-
 
             {/* User Menu */}
             <div className="relative">
@@ -53,7 +62,7 @@ const Layout = () => {
               {userMenuOpen && (
                 <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5">
                   <button
-                    onClick={() => navigate('/profile')}
+                    onClick={handleProfileClick}
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                   >
                     Your Profile
@@ -70,7 +79,6 @@ const Layout = () => {
           </div>
         </div>
       </div>
-
 
       {isWhiteboardPage ? (
         <main className='px-4'>
