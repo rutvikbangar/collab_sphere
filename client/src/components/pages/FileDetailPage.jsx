@@ -38,6 +38,52 @@ function FileDetailPage() {
         event.target.value = null; // Reset file input
     };
 
+    const handleDownload = async (file) => {
+        try {
+            // Ensure the filename has .pdf extension
+            let downloadFilename = file.fileName;
+            if (!downloadFilename.toLowerCase().endsWith('.pdf')) {
+                downloadFilename = `${downloadFilename}.pdf`;
+            }
+            
+            // Fetch the file content
+            const response = await fetch(file.url);
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch file');
+            }
+            
+            // Get the blob from response
+            const blob = await response.blob();
+            
+            // Create a new blob with PDF mime type to ensure proper file type
+            const pdfBlob = new Blob([blob], { type: 'application/pdf' });
+            
+            // Create object URL for the blob
+            const url = window.URL.createObjectURL(pdfBlob);
+            
+            // Create temporary anchor element and trigger download
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = downloadFilename; // This will be the filename with .pdf extension
+            document.body.appendChild(a);
+            a.click();
+            
+            // Cleanup
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            toast.success(`Downloaded ${downloadFilename}`);
+        } catch (error) {
+            console.error('Download error:', error);
+            
+            // Fallback: Open URL directly in new tab
+            // The fl_attachment flag should force download
+            window.open(file.url, '_blank');
+            toast.info('Opening file in new tab...');
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="flex items-center justify-center py-20">
@@ -73,6 +119,7 @@ function FileDetailPage() {
                         className="hidden"
                         onChange={handleFileUpload}
                         disabled={isUploading}
+                        accept="application/pdf"
                     />
                     <label
                         htmlFor="file-upload"
@@ -108,20 +155,19 @@ function FileDetailPage() {
                                                 {file.fileName}
                                             </p>
                                             <p className="text-sm text-gray-500">
-                                                {file.fileName.split('.').pop().toUpperCase()} • Uploaded on {new Date(file.createdAt).toLocaleDateString()}
+                                                PDF • Uploaded on {new Date(file.createdAt).toLocaleDateString()}
                                             </p>
                                         </div>
                                     </div>
 
-
-                                    <a
-                                        href={file.url}
-                                        download={file.fileName}
-                                        className="inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-100 transition"
+                                    {/* Download button */}
+                                    <button
+                                        onClick={() => handleDownload(file)}
+                                        className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
                                     >
                                         <FaDownload className="mr-2" />
                                         Download
-                                    </a>
+                                    </button>
                                 </div>
                             </li>
                         ))}
