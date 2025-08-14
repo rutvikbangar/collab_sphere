@@ -115,3 +115,37 @@ export const addUserToRoom = async (roomId, email) => {
     return null;
   }
 };
+export const uploadFile = async (roomId, file) => {
+  const formData = new FormData();
+  formData.append('roomId', roomId);
+  formData.append('file', file);
+
+  try {
+    const response = await api.post('/files/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    toast.success('File uploaded successfully!');
+    return response.data.data;
+  } catch (error) {
+    if (error.response) {
+      toast.error(error.response.data.message);
+    } else {
+      toast.error("Failed to upload file");
+    }
+    return null;
+  }
+};
+
+export const getRoomFiles = async (roomId) => {
+  try {
+    const response = await api.get(`/files/room/${roomId}`);
+    return response.data.data;
+  } catch (error) {
+    if (error.response) {
+      toast.error(error.response.data.message);
+    } else {
+      toast.error("Failed to fetch files");
+    }
+    return null;
+  }
+};

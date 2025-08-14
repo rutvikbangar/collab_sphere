@@ -5,6 +5,7 @@ import http from 'http';
 import { Server } from 'socket.io';
 import { Stroke } from "./models/strokes.model.js";
 import { Message } from "./models/message.model.js";
+import { File } from "./models/files.model.js";
 
 
 const app = express();
@@ -21,12 +22,13 @@ import authRoutes from "./routes/authRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
 import roomRoutes from "./routes/roomRoutes.js"
 import strokesRoutes from "./routes/strokes.routes.js"
+import fileRoutes from "./routes/filesRoutes.js";
 
 app.use("/api/v1/user",userRoutes);
 app.use("/api/v1/auth",authRoutes);
 app.use("/api/v1/room",roomRoutes);
 app.use("/api/v1/strokes",strokesRoutes);
-
+app.use("/api/v1/files", fileRoutes);
 
 
 app.use(errorHandler);
@@ -56,6 +58,9 @@ io.on('connection', (socket) => {
       .populate('sender', 'name'); // Get sender's name from User model
       socket.emit('load-chat-history', chatHistory);
 
+      // fetch files
+      // const files = await File.find({roomId});
+      // socket.emit('load-files',files);
 
     } catch (error) {
       console.error('Failed to fetch strokes:', error);
@@ -100,6 +105,9 @@ io.on('connection', (socket) => {
     }
   });
 
+  // files
+  //socket.on('upload-file');
+  
 
   socket.on('disconnect', () => {
   });

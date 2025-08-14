@@ -3,7 +3,7 @@ import { getAllUserRooms, createRoom, addUserToRoom } from "../../api-service/ap
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { FaPlus, FaUsers, FaCalendar, FaClock, FaShare, FaSignInAlt, FaUserPlus } from "react-icons/fa";
+import { FaPlus, FaUsers, FaCalendar, FaClock, FaShare, FaSignInAlt, FaUserPlus, FaFileAlt } from "react-icons/fa";
 import Modal from "./modal/Modal.jsx";
 
 function DashboardPage() {
@@ -230,6 +230,7 @@ function DashboardPage() {
                     {rooms.map((room) => (
                         <div
                             key={room._id}
+                            onClick={()=> navigate(`/room/${room._id}/files`)}
                             className="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-200 hover:border-gray-300 transition-all duration-300 group"
                         >
                             <div className="p-6">
@@ -255,20 +256,38 @@ function DashboardPage() {
                                 </div>
 
 
-                                <div className="flex gap-3">
+                                <div className="flex flex-col gap-3">
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate(`/room/${room._id}`);
+                                            }}
+                                            className="flex-1 bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2"
+                                        >
+                                            <FaSignInAlt className="text-sm" />
+                                            Join Room
+                                        </button>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleOpenSharePopup(room._id, room.roomName);
+                                            }}
+                                            className="flex-1 bg-gray-100 text-gray-700 px-4 py-2.5 rounded-lg hover:bg-gray-200 flex items-center justify-center gap-2"
+                                        >
+                                            <FaUserPlus className="text-sm" />
+                                            Add Member
+                                        </button>
+                                    </div>
                                     <button
-                                        onClick={() => navigate(`/room/${room._id}`)}
-                                        className="flex-1 bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            navigate(`/room/${room._id}/files`);
+                                        }}
+                                        className="w-full bg-indigo-50 text-indigo-600 px-4 py-2.5 rounded-lg hover:bg-indigo-100 flex items-center justify-center gap-2"
                                     >
-                                        <FaSignInAlt className="text-sm" />
-                                        Join Room
-                                    </button>
-                                    <button
-                                        onClick={() => handleOpenSharePopup(room._id, room.roomName)}
-                                        className="flex-1 bg-gray-100 text-gray-700 px-4 py-2.5 rounded-lg hover:bg-gray-200 flex items-center justify-center gap-2"
-                                    >
-                                        <FaUserPlus className="text-sm" />
-                                        Add Member
+                                        <FaFileAlt className="text-sm" />
+                                        File Section
                                     </button>
                                 </div>
                             </div>

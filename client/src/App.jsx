@@ -8,7 +8,7 @@ import Layout from "./components/Layout/Layout.jsx";
 import DashboardPage from "./components/pages/DashboardPage.jsx";
 import RoomDetailPage from "./components/pages/RoomDetailPage.jsx";
 import ProfilePage from "./components/pages/ProfilePage.jsx"; // Add this import
-
+import FileDetailPage from "./components/pages/FileDetailPage.jsx";
 
 
 const router = createBrowserRouter(createRoutesFromElements(
@@ -23,6 +23,7 @@ const router = createBrowserRouter(createRoutesFromElements(
       </ProtectedRoute>}>
       <Route index element={<DashboardPage />} />
       <Route path="profile" element={<ProfilePage />} /> {/* Add this route */}
+      <Route path="room/:roomId/files" element={<FileDetailPage />} />
     </Route>
 
     <Route
