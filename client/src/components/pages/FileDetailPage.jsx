@@ -40,13 +40,13 @@ function FileDetailPage() {
 
     const handleDownload = async (file) => {
         try {
-            // Ensure the filename has .pdf extension
+            
             let downloadFilename = file.fileName;
             if (!downloadFilename.toLowerCase().endsWith('.pdf')) {
                 downloadFilename = `${downloadFilename}.pdf`;
             }
             
-            // Fetch the file content
+            
             const response = await fetch(file.url);
             
             if (!response.ok) {
@@ -65,7 +65,7 @@ function FileDetailPage() {
             // Create temporary anchor element and trigger download
             const a = document.createElement('a');
             a.href = url;
-            a.download = downloadFilename; // This will be the filename with .pdf extension
+            a.download = downloadFilename;
             document.body.appendChild(a);
             a.click();
             
@@ -77,8 +77,6 @@ function FileDetailPage() {
         } catch (error) {
             console.error('Download error:', error);
             
-            // Fallback: Open URL directly in new tab
-            // The fl_attachment flag should force download
             window.open(file.url, '_blank');
             toast.info('Opening file in new tab...');
         }

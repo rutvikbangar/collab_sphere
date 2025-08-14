@@ -1,4 +1,3 @@
-// Updated app.js - Socket.io server side
 import express from "express"
 import cors from "cors"
 import { errorHandler } from "./middlewares/errorhandler.js";
@@ -7,10 +6,6 @@ import { Server } from 'socket.io';
 import { Stroke } from "./models/strokes.model.js";
 import { Message } from "./models/message.model.js";
 import { File } from "./models/files.model.js";
-import cloudinary from "./utils/cloudinary.js";
-import multer from "multer";
-import fs from "fs";
-import path from "path";
 
 const app = express();
 
@@ -21,6 +16,10 @@ app.use(cors({
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
 
 import authRoutes from "./routes/authRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
@@ -41,10 +40,10 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: '*', // allow all origins for now
+    origin: '*',
     methods: ['GET', 'POST'],
   },
-  maxHttpBufferSize: 10e6 // 10MB max file size for socket.io
+  maxHttpBufferSize: 10e6 // 10MB max file size
 });
 
 io.on('connection', (socket) => {
@@ -61,19 +60,16 @@ io.on('connection', (socket) => {
         .populate('sender', 'name');
       socket.emit('load-chat-history', chatHistory);
 
-      // Fetch files with proper download URLs
       const files = await File.find({ roomId }).populate("uploadedBy", "name");
-      
-      // Ensure all files have proper download URLs and PDF extensions
+
       const filesWithDownloadUrls = files.map(file => {
         const fileObj = file.toObject();
         
-        // Ensure filename has .pdf extension
+
         if (!fileObj.fileName.toLowerCase().endsWith('.pdf')) {
           fileObj.fileName = `${fileObj.fileName}.pdf`;
         }
         
-        // Ensure URL has fl_attachment flag for forced download
         if (!fileObj.url.includes('fl_attachment')) {
           if (fileObj.url.includes('/upload/')) {
             fileObj.url = fileObj.url.replace('/upload/', '/upload/fl_attachment/');

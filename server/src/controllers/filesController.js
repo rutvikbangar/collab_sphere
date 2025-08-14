@@ -29,12 +29,11 @@ export const uploadFile = asyncHandler(async (req, res) => {
 
   fs.unlinkSync(req.file.path); // Clean up temp file
 
-  // Create download URL with fl_attachment flag (without filename in URL)
   let downloadUrl = result.secure_url;
   
-  // Add fl_attachment transformation (correct format)
+
   if (downloadUrl.includes('/upload/')) {
-    // Just add fl_attachment, not with filename
+    
     downloadUrl = downloadUrl.replace('/upload/', '/upload/fl_attachment/');
   }
 
@@ -47,6 +46,8 @@ export const uploadFile = asyncHandler(async (req, res) => {
     uploadedBy: userId,
   });
 
+  const populate = await newFile.populate("uploadedBy", "name");
+  req.io.to(roomId).emit("file-uploaded", populate);
   return res
     .status(201)
     .json(new ApiResponse(201, newFile, "File uploaded successfully"));
@@ -77,8 +78,7 @@ export const deleteFile = asyncHandler(async (req, res) => {
 export const getRoomFiles = asyncHandler(async (req, res) => {
   const { roomId } = req.params;
   const files = await File.find({ roomId }).populate("uploadedBy", "name");
-  
-  // Ensure all file URLs have the download flag
+
   const filesWithDownloadUrls = files.map(file => {
     const fileObj = file.toObject();
     

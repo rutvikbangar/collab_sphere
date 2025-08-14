@@ -53,7 +53,6 @@ function RoomDetailPage() {
     // Listen for real-time file updates
     socket.on('file-uploaded', (newFile) => {
       setFiles((prev) => {
-        // Check if file already exists to avoid duplicates
         const exists = prev.some(f => f._id === newFile._id);
         if (!exists) {
           // Show notification for files uploaded by others
@@ -67,18 +66,12 @@ function RoomDetailPage() {
       });
     });
 
-    // Listen for file deletion
-    socket.on('file-deleted', ({ fileId }) => {
-      setFiles((prev) => prev.filter(f => f._id !== fileId));
-      toast.info('A file was deleted');
-    });
 
     return () => {
       socket.off('load-chat-history');
       socket.off('receive-message');
       socket.off('load-files');
       socket.off('file-uploaded');
-      socket.off('file-deleted');
     };
   }, [roomId]);
 
@@ -99,7 +92,6 @@ function RoomDetailPage() {
     navigate(-1);
   };
 
-  // HTTP Upload function (same as FileDetailPage)
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -126,15 +118,14 @@ function RoomDetailPage() {
       
       if (response) {
         toast.success('File uploaded successfully!');
-        // The file will automatically appear in the list via the 'file-uploaded' socket event
-        // which is emitted by the server after successful upload
+
       }
     } catch (error) {
       console.error('Upload error:', error);
       toast.error(error.response?.data?.message || 'Failed to upload file');
     } finally {
       setIsUploading(false);
-      event.target.value = null; // Reset file input
+      event.target.value = null;
     }
   };
 
@@ -148,7 +139,7 @@ function RoomDetailPage() {
   };
 
   const handleDownload = async (e, file) => {
-    e.preventDefault(); // Prevent any default behavior
+    e.preventDefault();
     
     try {
       // Ensure the filename has .pdf extension
@@ -156,11 +147,10 @@ function RoomDetailPage() {
       if (!downloadFilename.toLowerCase().endsWith('.pdf')) {
         downloadFilename = `${downloadFilename}.pdf`;
       }
-      
-      // Show loading toast
+
       const loadingToast = toast.loading('Preparing download...');
       
-      // Fetch the file content
+      
       const response = await fetch(file.url);
       
       if (!response.ok) {
@@ -187,7 +177,7 @@ function RoomDetailPage() {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
       
-      // Dismiss loading toast and show success
+ 
       toast.dismiss(loadingToast);
       toast.success(`Downloaded ${downloadFilename}`);
     } catch (error) {
