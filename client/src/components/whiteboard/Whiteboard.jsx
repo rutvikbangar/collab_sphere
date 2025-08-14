@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Stage, Layer, Line } from 'react-konva';
-import { FaPen, FaEraser } from 'react-icons/fa';
+import { FaPen, FaEraser, FaDownload } from 'react-icons/fa';
 import clsx from 'clsx';
 import { v4 as uuidv4 } from 'uuid';
 import io from "socket.io-client"
@@ -18,7 +18,7 @@ const Whiteboard = ({ roomId }) => {
   const containerRef = useRef(null);
   const isDrawing = useRef(false);
   const socketRef = useRef(null);
-
+  const stage = useRef(null);
 
   const colors = ['#ffffff', '#ef4444', '#34d399', '#60a5fa', '#f59e0b'];
 
@@ -60,10 +60,6 @@ const Whiteboard = ({ roomId }) => {
     return () => window.removeEventListener('resize', updateSize);
 }, []); 
 
-
-
-
-
   const handleMouseDown = (e) => {
     isDrawing.current = true;
     const pos = e.target.getStage().getPointerPosition();
@@ -97,6 +93,16 @@ const Whiteboard = ({ roomId }) => {
     }
   };
 
+  const handleDownload = () => {
+    const uri = stage.current.toDataURL();
+    const link = document.createElement('a');
+    link.download = `whiteboard-${roomId}-${new Date().toISOString().slice(0, 10)}.png`;
+    link.href = uri;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const toolbarHeight = 70;
   return (
     <div className="w-full h-full overflow-hidden bg-gray-900 flex flex-col">
@@ -127,7 +133,7 @@ const Whiteboard = ({ roomId }) => {
           </button>
         </div>
 
-        {/* Color Picker */}
+        {/* Center Color Picker */}
         <div className="flex gap-2">
           {colors.map((color) => (
             <div
@@ -143,6 +149,14 @@ const Whiteboard = ({ roomId }) => {
             />
           ))}
         </div>
+
+        {/* Download Button */}
+        <button
+          onClick={handleDownload}
+          className="px-4 py-2 rounded-md flex items-center gap-2 transition-colors text-gray-300 hover:bg-gray-700"
+        >
+          <FaDownload /> Save
+        </button>
       </div>
 
       {/* Canvas Area Container */}
@@ -162,6 +176,7 @@ const Whiteboard = ({ roomId }) => {
           <p className="text-white text-center">Loading...</p>
         ) : (
           <Stage
+            ref={stage}
             width={dimensions.width}
             height={dimensions.height}
             onMouseDown={handleMouseDown}

@@ -147,10 +147,7 @@ function RoomDetailPage() {
       if (!downloadFilename.toLowerCase().endsWith('.pdf')) {
         downloadFilename = `${downloadFilename}.pdf`;
       }
-
-      const loadingToast = toast.loading('Preparing download...');
-      
-      
+            
       const response = await fetch(file.url);
       
       if (!response.ok) {
@@ -177,8 +174,6 @@ function RoomDetailPage() {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
       
- 
-      toast.dismiss(loadingToast);
       toast.success(`Downloaded ${downloadFilename}`);
     } catch (error) {
       console.error('Download error:', error);
