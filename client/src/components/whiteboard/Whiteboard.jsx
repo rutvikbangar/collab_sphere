@@ -5,8 +5,7 @@ import clsx from 'clsx';
 import { v4 as uuidv4 } from 'uuid';
 import io from "socket.io-client"
 
-
-const socket = io('https://collab-sphere-server.onrender.com');
+const socket = io(import.meta.env.VITE_SOCKET_URL);
 
 const Whiteboard = ({ roomId }) => {
   const [lines, setLines] = useState([]);

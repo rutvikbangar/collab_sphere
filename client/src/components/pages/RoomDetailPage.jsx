@@ -6,7 +6,7 @@ import io from "socket.io-client";
 import toast from "react-hot-toast";
 import { uploadFile } from "../../api-service/api"; // Import the HTTP upload function
 
-const socket = io('https://collab-sphere-server.onrender.com');
+const socket = io(import.meta.env.VITE_SOCKET_URL);
 
 function RoomDetailPage() {
   const { roomId } = useParams();
