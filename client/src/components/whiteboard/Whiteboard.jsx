@@ -181,6 +181,9 @@ const Whiteboard = ({ roomId }) => {
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
             onMouseMove={handleMouseMove}
+            onTouchStart={handleMouseDown}
+            onTouchMove={handleMouseMove}
+            onTouchEnd={handleMouseUp}
           >
             <Layer>
               {lines.map((line, i) => (
