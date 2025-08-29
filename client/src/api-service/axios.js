@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:3000/api/v1";
+const baseUrl = "https://collab-sphere-server.onrender.com/api/v1";
 
 const instance = axios.create({
   baseURL: baseUrl,

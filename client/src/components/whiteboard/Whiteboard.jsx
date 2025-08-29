@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import io from "socket.io-client"
 
 
-const socket = io('http://localhost:3000');
+const socket = io('https://collab-sphere-server.onrender.com');
 
 const Whiteboard = ({ roomId }) => {
   const [lines, setLines] = useState([]);

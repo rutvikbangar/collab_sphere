@@ -6,7 +6,7 @@ import io from "socket.io-client";
 import toast from "react-hot-toast";
 import { uploadFile } from "../../api-service/api"; // Import the HTTP upload function
 
-const socket = io('http://localhost:3000');
+const socket = io('https://collab-sphere-server.onrender.com');
 
 function RoomDetailPage() {
   const { roomId } = useParams();
