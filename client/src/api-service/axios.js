@@ -9,8 +9,6 @@ const instance = axios.create({
     'Content-Type': 'application/json',
   },
 });
-
-
 instance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
@@ -31,6 +29,7 @@ instance.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       // Remove the invalid token from local storage
       localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
       // Redirect the user to the login page
       window.location.href = '/login';
     }
