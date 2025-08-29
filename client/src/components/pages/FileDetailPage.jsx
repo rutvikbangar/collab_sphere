@@ -32,7 +32,6 @@ function FileDetailPage() {
         const response = await uploadFile(roomId, file);
         if (response) {
             await fetchFiles();
-            toast.success('File uploaded successfully!');
         }
         setIsUploading(false);
         event.target.value = null; // Reset file input

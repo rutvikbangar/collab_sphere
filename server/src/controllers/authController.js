@@ -1,7 +1,6 @@
 import nodemailer from "nodemailer"
 import { OtpToken } from "../models/otpToken.model.js"
 import {User} from "../models/user.model.js"
-import crypto from "crypto"
 import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 import { asyncHandler } from "../utils/asyncHandler.js"
@@ -40,12 +39,12 @@ export const verifyOtp = asyncHandler(async (req, res) => {
 
     const user = await User.findOne({ email });
 
-    // 🛑 Block if already registered but trying to re-register
+    //  Block if already registered but trying to re-register
     if (user && registerFlag) {
         throw new ApiError(409, "User already registered. Please log in.");
     }
 
-    // 🛑 Block if not registered and not trying to register (login attempt)
+    //  Block if not registered and not trying to register (login attempt)
     if (!user && !registerFlag) {
         throw new ApiError(404, "User is not registered");
     }
@@ -62,14 +61,14 @@ export const verifyOtp = asyncHandler(async (req, res) => {
 
     await OtpToken.deleteOne({ email, otp });
 
-    // ✅ Registration flow
+    //  Registration flow
     if (registerFlag) {
         return res.status(200).json(
             new ApiResponse(200, { isEmail: true }, "OTP verified successfully")
         );
     }
 
-    // ✅ Login flow
+    //  Login flow
     const accessToken = user.generateAccessToken();
     return res.status(200).json(
         new ApiResponse(200, { user, accessToken }, "OTP verified successfully")

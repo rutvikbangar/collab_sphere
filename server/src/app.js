@@ -32,7 +32,6 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/room", roomRoutes);
 app.use("/api/v1/strokes", strokesRoutes);
 app.use("/api/v1/files", fileRoutes);
-
 app.use(errorHandler);
 
 // socket io

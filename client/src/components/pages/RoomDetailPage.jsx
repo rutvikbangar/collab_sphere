@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import Whiteboard from "../whiteboard/whiteboard.jsx";
+import Whiteboard from "../whiteboard/Whiteboard.jsx";
 import { FaArrowLeft, FaPaperPlane, FaFileAlt, FaComments } from 'react-icons/fa';
 import io from "socket.io-client";
 import toast from "react-hot-toast";
@@ -116,10 +116,6 @@ function RoomDetailPage() {
       // Use HTTP upload API
       const response = await uploadFile(roomId, file);
       
-      if (response) {
-        toast.success('File uploaded successfully!');
-
-      }
     } catch (error) {
       console.error('Upload error:', error);
       toast.error(error.response?.data?.message || 'Failed to upload file');
